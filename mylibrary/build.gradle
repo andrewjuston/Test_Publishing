@@ -1,0 +1,77 @@
+plugins {
+    id 'com.android.library'
+    id 'com.jfrog.artifactory'
+    id 'maven-publish'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.1"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0.1"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+publishing {
+    // Specify the publications
+    publications {
+        // We will be publishing an APK
+        aar(MavenPublication) {
+            artifactId = "mylibrary"
+            groupId = "com.jessica.mylibrary"
+            version = "1.0.1"
+            artifact("$buildDir/outputs/aar/mylibrary-release.aar")
+        }
+    }
+}
+
+
+// Tell Artifactory where it should publish all of the artifacts to
+artifactory {
+    contextUrl = "https://cashlezsdk.jfrog.io/artifactory"
+    publish {
+        repository {
+            repoKey = "default-maven-local"
+            username = "apps-dist@cashlez.com"
+            password = "AKCp8ii9C7ggw5btfRB7CkS37m9jmpxWo7pnRu8xxZSSkNX6TCoRf3KnNmUkBLNTeBHNLrdfz"
+            maven = true
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+}
+
+// Tell Artifactory which publications to publish
+artifactoryPublish {
+    publications(publishing.publications.aar)
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}
