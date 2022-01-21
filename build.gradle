@@ -24,12 +24,12 @@ allprojects {
 
 // Tell Artifactory where it should publish all of the artifacts to
 artifactory {
-    contextUrl = "https://cashlezsdk.jfrog.io/artifactory"
+    contextUrl = "https://czsdk.jfrog.io/artifactory"
     publish {
         repository {
-            repoKey = "default-maven-local"
+            repoKey = "cashlez-sdk"
             username = "apps-dist@cashlez.com"
-            password = "AKCp8ii9C7ggw5btfRB7CkS37m9jmpxWo7pnRu8xxZSSkNX6TCoRf3KnNmUkBLNTeBHNLrdfz"
+            password = "AKCp8jQnBwETxpkf9aHjRwiLKv6UhhNXb5oAshKxmbYVDxGHc2a2B8NvKMYcRRzRM7EQvrSMd"
             maven = true
         }
         defaults {

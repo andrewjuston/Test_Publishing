@@ -1,7 +1,19 @@
 plugins {
     id 'com.android.library'
-    id 'com.jfrog.artifactory'
     id 'maven-publish'
+    id 'maven'
+}
+
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
+def getVersionName = {
+    return "1.0.3"
+
+}
+
+def getArtifactId = { ->
+    return "mylibrary" // Replace with library name ID
 }
 
 android {
@@ -11,8 +23,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 2
-        versionName "1.0.2"
+        versionCode 3
+        versionName "1.0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -30,22 +42,65 @@ android {
     }
 }
 
+//Github
+//uploadArchives {
+//    repositories.mavenDeployer {
+//        def deployPath = file(getProperty('$buildDir/outputs/aar/mylibrary-release.aar'))
+//        repository(url: "file://${$buildDir/outputs/aar/mylibrary-release.aar}")
+//        pom.project {
+//            groupId 'com.jessica'
+//            artifactId 'mylibrary'
+//            version "1.0.3"
+//        }
+//    }
+//}
+
+
 publishing {
+    publications {
+        bar(MavenPublication) {
+            groupId 'com.jessica.mylibrary' // Replace with group ID
+            artifactId getArtifactId()
+            version getVersionName()
+            artifact("$buildDir/outputs/aar/mylibrary-release.aar")
+        }
+    }
+}
+
+/*publishing {
     // Specify the publications
     publications {
         // We will be publishing an APK
         aar(MavenPublication) {
             artifactId = "mylibrary"
             groupId = "com.jessica.mylibrary"
-            version = "1.0.2"
+            version = "1.0.3"
             artifact("$buildDir/outputs/aar/mylibrary-release.aar")
         }
     }
-}
+}*/
+
+
 
 
 // Tell Artifactory where it should publish all of the artifacts to
-artifactory {
+/*artifactory {
+    contextUrl = "https://czsdk.jfrog.io/artifactory"
+    publish {
+        repository {
+            repoKey = "cashlez-sdk"
+            username = "apps-dist@cashlez.com"
+            password = "AKCp8jQnBwETxpkf9aHjRwiLKv6UhhNXb5oAshKxmbYVDxGHc2a2B8NvKMYcRRzRM7EQvrSMd"
+            maven = true
+        }
+        defaults {
+            publications('aar')
+            publishArtifacts = true
+            publishPom = true
+        }
+    }
+}*/
+/*artifactory {
     contextUrl = "https://cashlezsdk.jfrog.io/artifactory"
     publish {
         repository {
@@ -60,12 +115,27 @@ artifactory {
             publishPom = true
         }
     }
+}*/
+
+repositories{
+    maven{
+        name="GithubPackages"
+        url = uri("https://maven.pkg.github.com/andrewjuston/Test_Publishing")
+        credentials{
+            username = githubProperties['gpr.usr'] ?: System.getenv("andrewjuston")
+            password = githubProperties['gpr.key'] ?: System.getenv("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")
+        }
+    }
 }
 
+
+
 // Tell Artifactory which publications to publish
+/*
 artifactoryPublish {
     publications(publishing.publications.aar)
 }
+*/
 
 dependencies {
 
